@@ -1,7 +1,7 @@
 const Inventory = require('../models/Inventory');
 const Product = require('../models/Product');
 
-// Lấy tất cả inventory
+
 exports.getAllInventories = async (req, res) => {
   try {
     const inventories = await Inventory.find().populate('product');
@@ -19,7 +19,7 @@ exports.getAllInventories = async (req, res) => {
   }
 };
 
-// Lấy inventory theo ID (với join product)
+
 exports.getInventoryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -46,7 +46,7 @@ exports.getInventoryById = async (req, res) => {
   }
 };
 
-// Lấy inventory theo product ID
+
 exports.getInventoryByProductId = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -73,12 +73,11 @@ exports.getInventoryByProductId = async (req, res) => {
   }
 };
 
-// Tăng stock
 exports.addStock = async (req, res) => {
   try {
     const { product, quantity } = req.body;
 
-    // Kiểm tra dữ liệu đầu vào
+
     if (!product || !quantity || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -86,7 +85,7 @@ exports.addStock = async (req, res) => {
       });
     }
 
-    // Kiểm tra product có tồn tại không
+
     const productExists = await Product.findById(product);
     if (!productExists) {
       return res.status(404).json({
@@ -95,7 +94,7 @@ exports.addStock = async (req, res) => {
       });
     }
 
-    // Tìm inventory và cập nhật
+   
     const inventory = await Inventory.findOneAndUpdate(
       { product },
       { $inc: { stock: quantity } },
@@ -123,12 +122,12 @@ exports.addStock = async (req, res) => {
   }
 };
 
-// Giảm stock
+
 exports.removeStock = async (req, res) => {
   try {
     const { product, quantity } = req.body;
 
-    // Kiểm tra dữ liệu đầu vào
+
     if (!product || !quantity || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -136,7 +135,7 @@ exports.removeStock = async (req, res) => {
       });
     }
 
-    // Tìm inventory hiện tại
+
     const currentInventory = await Inventory.findOne({ product });
     if (!currentInventory) {
       return res.status(404).json({
@@ -145,7 +144,7 @@ exports.removeStock = async (req, res) => {
       });
     }
 
-    // Kiểm tra stock có đủ không
+
     if (currentInventory.stock < quantity) {
       return res.status(400).json({
         success: false,
@@ -153,7 +152,7 @@ exports.removeStock = async (req, res) => {
       });
     }
 
-    // Cập nhật stock
+
     const inventory = await Inventory.findOneAndUpdate(
       { product },
       { $inc: { stock: -quantity } },
@@ -174,12 +173,12 @@ exports.removeStock = async (req, res) => {
   }
 };
 
-// Đặt hàng/Giữ chỗ (Reservation)
+
 exports.reservation = async (req, res) => {
   try {
     const { product, quantity } = req.body;
 
-    // Kiểm tra dữ liệu đầu vào
+
     if (!product || !quantity || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -187,7 +186,7 @@ exports.reservation = async (req, res) => {
       });
     }
 
-    // Tìm inventory hiện tại
+
     const currentInventory = await Inventory.findOne({ product });
     if (!currentInventory) {
       return res.status(404).json({
@@ -196,7 +195,7 @@ exports.reservation = async (req, res) => {
       });
     }
 
-    // Kiểm tra stock có đủ không
+
     if (currentInventory.stock < quantity) {
       return res.status(400).json({
         success: false,
@@ -204,7 +203,7 @@ exports.reservation = async (req, res) => {
       });
     }
 
-    // Giảm stock, tăng reserved
+
     const inventory = await Inventory.findOneAndUpdate(
       { product },
       { 
@@ -227,12 +226,11 @@ exports.reservation = async (req, res) => {
   }
 };
 
-// Xác nhận bán hàng (Sold)
+
 exports.sold = async (req, res) => {
   try {
     const { product, quantity } = req.body;
 
-    // Kiểm tra dữ liệu đầu vào
     if (!product || !quantity || quantity <= 0) {
       return res.status(400).json({
         success: false,
@@ -240,7 +238,7 @@ exports.sold = async (req, res) => {
       });
     }
 
-    // Tìm inventory hiện tại
+
     const currentInventory = await Inventory.findOne({ product });
     if (!currentInventory) {
       return res.status(404).json({
@@ -249,7 +247,7 @@ exports.sold = async (req, res) => {
       });
     }
 
-    // Kiểm tra reserved có đủ không
+
     if (currentInventory.reserved < quantity) {
       return res.status(400).json({
         success: false,
@@ -257,7 +255,7 @@ exports.sold = async (req, res) => {
       });
     }
 
-    // Giảm reserved, tăng soldCount
+
     const inventory = await Inventory.findOneAndUpdate(
       { product },
       { 
@@ -280,16 +278,16 @@ exports.sold = async (req, res) => {
   }
 };
 
-// Tạo inventory khi tạo product
+
 exports.createInventoryForProduct = async (productId) => {
   try {
-    // Kiểm tra inventory đã tồn tại cho product này chưa
+
     const existingInventory = await Inventory.findOne({ product: productId });
     if (existingInventory) {
       return existingInventory;
     }
 
-    // Tạo mới inventory
+
     const inventory = new Inventory({
       product: productId,
       stock: 0,

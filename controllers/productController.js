@@ -1,12 +1,12 @@
 const Product = require('../models/Product');
 const { createInventoryForProduct } = require('./inventoryController');
 
-// Tạo product mới (tự động tạo inventory tương ứng)
+
 exports.createProduct = async (req, res) => {
   try {
     const { name, description, price } = req.body;
 
-    // Kiểm tra dữ liệu đầu vào
+
     if (!name || !price) {
       return res.status(400).json({
         success: false,
@@ -14,7 +14,7 @@ exports.createProduct = async (req, res) => {
       });
     }
 
-    // Tạo product mới
+
     const product = new Product({
       name,
       description,
@@ -23,7 +23,7 @@ exports.createProduct = async (req, res) => {
 
     await product.save();
 
-    // Tự động tạo inventory tương ứng
+
     await createInventoryForProduct(product._id);
 
     res.status(201).json({
@@ -40,7 +40,7 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// Lấy tất cả products
+
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -58,7 +58,7 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// Lấy product theo ID
+
 exports.getProductById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -85,7 +85,7 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// Cập nhật product
+
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -118,7 +118,7 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Xóa product
+
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;

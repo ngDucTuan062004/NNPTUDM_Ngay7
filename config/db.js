@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    // Kết nối MongoDB (thay đổi URL và tên database theo nhu cầu)
+
     await mongoose.connect('mongodb://localhost:27017/inventory_db', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
